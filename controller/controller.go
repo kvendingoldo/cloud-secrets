@@ -6,24 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 )
-
-var (
-	lastSyncTimestamp = prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: "cloud_secret",
-			Subsystem: "controller",
-			Name:      "last_sync_timestamp_seconds",
-			Help:      "Timestamp of last successful sync with the provider",
-		},
-	)
-)
-
-func init() {
-	prometheus.MustRegister(lastSyncTimestamp)
-}
 
 // Controller is responsible for orchestrating the different components.
 type Controller struct {
@@ -45,7 +29,6 @@ func (c *Controller) RunOnce(ctx context.Context) error {
 
 	c.Provider.GetSecret(c.SecretName)
 
-	lastSyncTimestamp.SetToCurrentTime()
 	return nil
 }
 

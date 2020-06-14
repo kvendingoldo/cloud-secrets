@@ -14,7 +14,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -93,8 +92,6 @@ func serveMetrics(address string) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
-
-	http.Handle("/metrics", promhttp.Handler())
 
 	log.Fatal(http.ListenAndServe(address, nil))
 }
