@@ -3,15 +3,17 @@ package azure
 import (
 	"context"
 	"fmt"
-	kvauth "github.com/Azure/azure-sdk-for-go/services/keyvault/auth"
 	"github.com/Azure/azure-sdk-for-go/services/keyvault/v7.0/keyvault"
+	"github.com/Azure/go-autorest/autorest/azure"
+
+	kvauth "github.com/Azure/azure-sdk-for-go/services/keyvault/auth"
 	"github.com/kvendingoldo/cloud-secrets/provider"
 	"os"
 )
 
 type AzureProvider struct {
 	provider.BaseProvider
-	client   keyvault.BaseClient
+	client   *keyvault.BaseClient
 	vaultURL string
 }
 
@@ -22,30 +24,29 @@ type AzureConfig struct {
 }
 
 func NewAzureProvider(azureConfig AzureConfig) (*AzureProvider, error) {
-
-	provider := &AzureProvider{
-		client:   keyvault.New(),
-		vaultURL: "https://" + azureConfig.KeyVault + ".vault.azure.net",
-	}
-
-	authorizer, err := kvauth.NewAuthorizerFromEnvironment()
+	// TODO: need check auth method later
+	authorizer, err := kvauth.NewAuthorizerFromCLI()
 	if err != nil {
 		fmt.Printf("unable to create vault authorizer: %v\n", err)
 		os.Exit(1)
 	}
 
-	provider.client.Authorizer = authorizer
+	keyClient := keyvault.New()
+	keyClient.Authorizer = authorizer
+
+	provider := &AzureProvider{
+		client:   &keyClient,
+		vaultURL: fmt.Sprintf("https://%s.%s", azureConfig.KeyVault, azure.PublicCloud.KeyVaultDNSSuffix),
+	}
 
 	return provider, nil
 }
 
 func (p *AzureProvider) GetSecret(name string) {
 
-	fmt.Println("test")
 	secretResp, err := p.client.GetSecret(context.Background(), p.vaultURL, name, "")
 	if err != nil {
 		fmt.Printf("unable to get value for secret: %v\n", err)
-		os.Exit(1)
 	}
 	fmt.Println(*secretResp.Value)
 }
