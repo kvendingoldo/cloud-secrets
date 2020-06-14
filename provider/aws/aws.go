@@ -15,8 +15,6 @@ import (
 	"strings"
 )
 
-const ()
-
 type SecretsManagerAPI interface {
 	CancelRotateSecret(*secretsmanager.CancelRotateSecretInput) (*secretsmanager.CancelRotateSecretOutput, error)
 	CancelRotateSecretWithContext(aws.Context, *secretsmanager.CancelRotateSecretInput, ...request.Option) (*secretsmanager.CancelRotateSecretOutput, error)
@@ -102,7 +100,6 @@ type AWSProvider struct {
 	client SecretsManagerAPI
 }
 
-// AWSConfig contains configuration to create a new AWS provider.
 type AWSConfig struct {
 	Region     string
 	APIRetries int
@@ -141,7 +138,6 @@ func NewAWSProvider(awsConfig AWSConfig) (*AWSProvider, error) {
 }
 
 func (p *AWSProvider) GetSecret(name string) {
-
 
 	input := &secretsmanager.GetSecretValueInput{
 		SecretId:     aws.String(name),

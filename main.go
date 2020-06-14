@@ -7,6 +7,7 @@ import (
 	"github.com/kvendingoldo/cloud-secrets/pkg/apis/cloudsecrets/validation"
 	"github.com/kvendingoldo/cloud-secrets/provider"
 	"github.com/kvendingoldo/cloud-secrets/provider/aws"
+	"github.com/kvendingoldo/cloud-secrets/provider/azure"
 
 	"net/http"
 	"os"
@@ -51,6 +52,14 @@ func main() {
 				Region:     cfg.AWSRegion,
 				AssumeRole: cfg.AWSAssumeRole,
 				APIRetries: cfg.AWSAPIRetries,
+			},
+		)
+	case "azure":
+		p, err = azure.NewAzureProvider(
+			azure.AzureConfig{
+				Region:        cfg.AzureRegion,
+				ResourceGroup: cfg.AzureResourceGroup,
+				KeyVault:      cfg.AzureKeyVault,
 			},
 		)
 	default:
