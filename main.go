@@ -8,6 +8,7 @@ import (
 	"github.com/kvendingoldo/cloud-secrets/provider"
 	"github.com/kvendingoldo/cloud-secrets/provider/aws"
 	"github.com/kvendingoldo/cloud-secrets/provider/azure"
+	"github.com/kvendingoldo/cloud-secrets/provider/google"
 
 	"net/http"
 	"os"
@@ -60,6 +61,13 @@ func main() {
 				Region:        cfg.AzureRegion,
 				ResourceGroup: cfg.AzureResourceGroup,
 				KeyVault:      cfg.AzureKeyVault,
+			},
+		)
+	case "google":
+		p, err = google.NewGoogleProvider(
+			google.GoogleConfig{
+				ProjectId:     cfg.GCPProjectId,
+				SecretVersion: cfg.GCPSecretVersion,
 			},
 		)
 	default:

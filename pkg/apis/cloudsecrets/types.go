@@ -29,6 +29,9 @@ type Config struct {
 	AzureRegion        string
 	AzureResourceGroup string
 	AzureKeyVault      string
+
+	GCPProjectId     string
+	GCPSecretVersion string
 }
 
 var defaultConfig = &Config{
@@ -46,6 +49,9 @@ var defaultConfig = &Config{
 	AWSAPIRetries: 3,
 
 	AzureRegion: "centralus",
+
+	GCPProjectId:     "",
+	GCPSecretVersion: "latest",
 }
 
 func NewConfig() *Config {
@@ -70,7 +76,7 @@ func (cfg *Config) ParseFlags(args []string) error {
 	app.Flag("secret-name", "Name of secret").Default(defaultConfig.SecretName).StringVar(&cfg.SecretName)
 
 	// Flags related to providers
-	app.Flag("provider", "The Cloud provider (required, options: aws, azure)").Required().PlaceHolder("provider").EnumVar(&cfg.Provider, "aws", "azure")
+	app.Flag("provider", "The Cloud provider (required, options: aws, azure, google)").Required().PlaceHolder("provider").EnumVar(&cfg.Provider, "aws", "azure", "google")
 	// AWS
 	app.Flag("aws-region", "").Default(defaultConfig.AWSRegion).StringVar(&cfg.AWSRegion)
 	app.Flag("aws-assume-role", "When using the AWS provider, assume this IAM role. Useful for hosted zones in another AWS account. Specify the full ARN (optional)").Default(defaultConfig.AWSAssumeRole).StringVar(&cfg.AWSAssumeRole)
@@ -79,6 +85,10 @@ func (cfg *Config) ParseFlags(args []string) error {
 	app.Flag("azure-region", "").Default(defaultConfig.AzureRegion).StringVar(&cfg.AzureRegion)
 	app.Flag("azure-key-vault", "").StringVar(&cfg.AzureKeyVault)
 	app.Flag("azure-resource-group", "").StringVar(&cfg.AzureResourceGroup)
+	// Google
+	app.Flag("gcp-project-id", "").Default(defaultConfig.GCPProjectId).StringVar(&cfg.GCPProjectId)
+
+	app.Flag("gcp-secret-version", "").Default(defaultConfig.GCPSecretVersion).StringVar(&cfg.GCPSecretVersion)
 
 	// Miscellaneous flags
 	app.Flag("log-format", "The format in which log messages are printed (default: text, options: text, json)").Default(defaultConfig.LogFormat).EnumVar(&cfg.LogFormat, "text", "json")
